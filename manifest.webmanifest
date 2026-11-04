@@ -1,0 +1,17 @@
+{
+  "name": "Gridlock",
+  "short_name": "Gridlock",
+  "description": "Libère ta voiture du parking : 150 niveaux, éditeur et garage.",
+  "lang": "fr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#3fb6e8",
+  "theme_color": "#3fb6e8",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

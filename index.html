@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gridlock</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Gridlock : libère ta voiture du parking. 150 niveaux, un éditeur de niveaux et un garage.">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#3fb6e8">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Gridlock">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Rubik:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="style.css">
+<!-- Mesure d'audience Google Analytics : chargée seulement si le joueur accepte (voir js/game.js) -->
+<script>window.GRIDLOCK_GA = 'G-04KBZCZKWJ';</script>
+</head>
+<body data-ch="0">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-coin" viewBox="0 0 32 32"><circle cx="16" cy="17" r="13" fill="#c98a00"/><circle cx="16" cy="15" r="13" fill="#ffc93c"/><circle cx="16" cy="15" r="9.5" fill="none" stroke="#e0a100" stroke-width="2"/><path d="M13 10.5h4.2a3.3 3.3 0 0 1 0 6.6H13zM13 10.5v9.5" fill="none" stroke="#b37400" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-star" viewBox="0 0 64 64"><path d="M32 6l7.6 16 17.4 2.2-12.8 12 3.3 17.3L32 45l-15.5 8.5 3.3-17.3L7 24.2l17.4-2.2z" fill="currentColor" stroke="#0b1a3a22" stroke-width="2" stroke-linejoin="round"/><path d="M32 12l5.4 11.5" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".55"/></symbol>
+  </defs>
+</svg>
+
+<!-- ===== CARTE DES NIVEAUX ===== -->
+<div id="menu">
+  <header class="menu-head">
+    <h1 class="logo">Grid<span>lock</span></h1>
+    <div class="coins" id="coins-menu"><svg class="coin"><use href="#i-coin"/></svg><span>100</span></div>
+    <button class="round-btn" id="btn-settings" aria-label="Réglages">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+    </button>
+  </header>
+  <div class="map-wrap">
+    <button class="daily" id="btn-daily">
+      <svg class="daily-ico" viewBox="0 0 52 52" aria-hidden="true"><rect x="4" y="9" width="44" height="39" rx="9" fill="#ef3b36"/><rect x="4" y="19" width="44" height="29" rx="0" fill="#fff"/><rect x="4" y="40" width="44" height="8" rx="0" fill="#fff"/><rect x="4" y="9" width="44" height="39" rx="9" fill="none" stroke="#0b1a3a22" stroke-width="2"/><rect x="14" y="4" width="5" height="10" rx="2.5" fill="#14213d"/><rect x="33" y="4" width="5" height="10" rx="2.5" fill="#14213d"/><text id="daily-day" x="26" y="42" text-anchor="middle" font-family="Lilita One, sans-serif" font-size="20" fill="#14213d">4</text></svg>
+      <span><b>Défi du jour</b><small id="daily-sub">Un niveau difficile, 50 pièces à gagner</small></span>
+      <span class="go" id="daily-go">Jouer</span>
+    </button>
+    <div class="tiles">
+      <button class="tile" id="btn-garage">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M4 20L24 8l20 12v22H4z" fill="#1f5fbf"/><path d="M4 20L24 8l20 12" fill="none" stroke="#14213d" stroke-width="3" stroke-linejoin="round"/><rect x="10" y="22" width="28" height="20" fill="#dfe6ef"/><path d="M10 27h28M10 32h28M10 37h28" stroke="#b9c4d2" stroke-width="2"/></svg>
+        <span><b>Garage</b><small id="garage-sub">Choisis ta voiture</small></span>
+      </button>
+      <button class="tile" id="btn-editor">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="5" width="38" height="38" rx="7" fill="#3a3f4b"/><rect x="10" y="20" width="18" height="8" rx="3" fill="#ef3b36"/><rect x="31" y="10" width="8" height="18" rx="3" fill="#4aa3ff"/><path d="M27 40l13-13 4 4-13 13h-4z" fill="#ffc93c" stroke="#14213d" stroke-width="2" stroke-linejoin="round"/></svg>
+        <span><b>Atelier</b><small>Crée et partage tes niveaux</small></span>
+      </button>
+    </div>
+    <button class="install-banner" id="install-banner" hidden>
+      <img src="icons/icon-192.png" alt="" width="40" height="40">
+      <span><b>Installer Gridlock</b><small>Joue depuis ton écran d'accueil, même sans internet</small></span>
+      <span class="go">Installer</span>
+    </button>
+    <div class="map" id="map"></div>
+  </div>
+  <div class="play-bar"><button class="chunky yellow" id="btn-play">Jouer le niveau 1</button></div>
+</div>
+
+<!-- ===== JEU ===== -->
+<div id="game" hidden>
+  <div class="hud">
+    <button class="round-btn" id="btn-back" aria-label="Retour à la carte">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+    </button>
+    <div class="title"><b id="lvl-name">Niveau 1</b><small id="lvl-sub">Le Centre-ville</small></div>
+    <div class="coins" id="coins-game"><svg class="coin"><use href="#i-coin"/></svg><span>100</span></div>
+  </div>
+
+  <div class="meter-row">
+    <div class="meter" id="meter">
+      <svg viewBox="0 0 64 64"><circle class="track" cx="32" cy="32" r="27" fill="none" stroke-width="8"/><circle class="bar" id="meter-bar" cx="32" cy="32" r="27" fill="none" stroke-width="8" stroke-linecap="round" stroke-dasharray="169.6" stroke-dashoffset="0"/></svg>
+      <b id="moves-left">12</b>
+    </div>
+    <div class="goals">
+      <span class="lbl">Coups restants</span>
+      <span class="targets" id="targets"></span>
+    </div>
+    <div class="timer" id="timer">0:00</div>
+  </div>
+
+  <div class="board-wrap">
+    <div class="board">
+      <div class="lot" id="lot">
+        <svg class="paint" id="paint" viewBox="0 0 300 300" preserveAspectRatio="none" aria-hidden="true"></svg>
+        <div class="gap" aria-hidden="true"></div>
+      </div>
+      <div class="gate-arm" id="gate" aria-hidden="true"></div>
+      <div class="gate-post" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <p class="tip" id="tip"></p>
+
+  <div class="controls" id="controls">
+    <button class="chunky" id="btn-undo" aria-label="Annuler le dernier coup">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg>Annuler</button>
+    <button class="chunky" id="btn-reset" aria-label="Recommencer le niveau">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Rejouer</button>
+    <button class="chunky yellow" id="btn-hint" aria-label="Acheter un indice">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg>Indice<span class="price" id="hint-price"><svg class="coin"><use href="#i-coin"/></svg>25</span></button>
+    <button class="chunky red" id="btn-solve" aria-label="Jouer la solution" hidden>
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12-7.5z"/></svg>Solution</button>
+  </div>
+</div>
+
+<!-- ===== GARAGE ===== -->
+<div id="garage" class="screen" hidden>
+  <div class="hud">
+    <button class="round-btn" data-back aria-label="Retour à la carte">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+    </button>
+    <div class="title"><b>Garage</b><small>La voiture que tu dois sortir du parking</small></div>
+    <div class="coins" data-coins><svg class="coin"><use href="#i-coin"/></svg><span>100</span></div>
+  </div>
+  <div class="showroom">
+    <div class="showroom-car" id="showroom-car"></div>
+    <b id="showroom-name">Bolide rouge</b>
+  </div>
+  <div class="garage-grid" id="garage-grid"></div>
+</div>
+
+<!-- ===== ATELIER ===== -->
+<div id="editor" class="screen" hidden>
+  <div class="hud">
+    <button class="round-btn" data-back aria-label="Retour à la carte">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+    </button>
+    <div class="title"><b>Atelier</b><small>Touche une case pour poser, un véhicule pour l'enlever</small></div>
+  </div>
+
+  <div class="meter-row ed-status" id="ed-status">
+    <div class="ed-badge" id="ed-badge">12</div>
+    <div class="goals"><span class="lbl" id="ed-title">Soluble en 12 coups</span><span class="targets" id="ed-detail">Vérifié par le solveur</span></div>
+  </div>
+
+  <div class="tools" id="tools" role="radiogroup" aria-label="Pièce à poser"></div>
+
+  <div class="board-wrap">
+    <div class="board">
+      <div class="lot" id="ed-lot">
+        <svg class="paint" id="ed-paint" viewBox="0 0 300 300" preserveAspectRatio="none" aria-hidden="true"></svg>
+        <div class="gap" aria-hidden="true"></div>
+      </div>
+      <div class="gate-arm" aria-hidden="true"></div>
+      <div class="gate-post" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <div class="controls four">
+    <button class="chunky" id="ed-clear">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>Vider</button>
+    <button class="chunky" id="ed-harder">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6 6 1-4.5 4.3L18 20l-6-3.2L6 20l1.5-6.7L3 9l6-1z"/></svg>Plus dur</button>
+    <button class="chunky yellow" id="ed-test">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12-7.5z"/></svg>Tester</button>
+    <button class="chunky red" id="ed-share">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>Partager</button>
+  </div>
+
+  <section class="panel">
+    <h2>Jouer le niveau d'un ami</h2>
+    <form class="code-form" id="code-form">
+      <label class="sr" for="code-input">Code du niveau</label>
+      <input id="code-input" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="GL-XXXX-XXXX">
+      <button class="chunky yellow" type="submit">Jouer</button>
+    </form>
+    <p class="form-msg" id="code-msg"></p>
+  </section>
+
+  <section class="panel" id="mine-panel" hidden>
+    <h2>Mes niveaux</h2>
+    <div class="mine" id="mine"></div>
+  </section>
+</div>
+
+<!-- ===== FENÊTRES ===== -->
+<div class="overlay" id="win" hidden>
+  <div class="card" role="dialog" aria-labelledby="win-title">
+    <div class="ribbon" id="win-title">Bravo !</div>
+    <div class="stars" id="win-stars">
+      <svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg>
+    </div>
+    <div class="result">
+      <div><b id="win-moves">12</b><small>coups</small></div>
+      <div><b id="win-opt">12</b><small>record possible</small></div>
+      <div><b id="win-time">0:42</b><small>temps</small></div>
+    </div>
+    <p id="win-text"></p>
+    <div class="reward" id="win-reward"><svg class="coin"><use href="#i-coin"/></svg><span>+25</span></div>
+    <div class="row">
+      <button class="chunky" id="win-retry">Rejouer</button>
+      <button class="chunky yellow" id="win-next">Suivant</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="fail" hidden>
+  <div class="card" role="dialog" aria-labelledby="fail-title">
+    <div class="ribbon fail" id="fail-title">Plus de coups</div>
+    <p>Ta voiture est toujours coincée. Recommence avec un nouveau plan, ou achète 5 coups de plus.</p>
+    <div class="row">
+      <button class="chunky" id="fail-retry">Recommencer</button>
+      <button class="chunky yellow" id="fail-more">+5 coups <span class="price" style="position:static"><svg class="coin"><use href="#i-coin"/></svg>30</span></button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="share" hidden>
+  <div class="card" role="dialog" aria-labelledby="share-title">
+    <h2 id="share-title">Partage ton niveau</h2>
+    <p id="share-text">Tes amis entrent ce code dans l'Atelier, ou ouvrent le lien.</p>
+    <div class="code-box" id="share-code">GL-XXXX</div>
+    <div class="row">
+      <button class="chunky" id="copy-code">Copier le code</button>
+      <button class="chunky yellow" id="copy-link">Copier le lien</button>
+    </div>
+    <textarea class="copy-fallback" id="copy-fallback" readonly hidden aria-label="Texte à copier"></textarea>
+    <p class="form-msg" id="share-msg"></p>
+    <div class="row one"><button class="chunky" id="share-close">Fermer</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="settings" hidden>
+  <div class="card" role="dialog" aria-labelledby="set-title">
+    <h2 id="set-title">Réglages</h2>
+    <div class="settings-list">
+      <button class="toggle" id="tg-sound" role="switch" aria-checked="true"><span><b>Sons</b><small>Bruitages des véhicules et de la victoire</small></span><i class="switch"></i></button>
+      <button class="toggle" id="tg-video" role="switch" aria-checked="false"><span><b>Mode vidéo</b><small>Indices gratuits, bouton Solution et tous les niveaux ouverts, pour enregistrer tes vidéos</small></span><i class="switch"></i></button>
+      <button class="toggle" id="tg-stats" role="switch" aria-checked="false" hidden><span><b>Statistiques</b><small>Aide à améliorer le jeu (Google Analytics)</small></span><i class="switch"></i></button>
+      <div class="toggle install-row"><span><b>Installer le jeu</b><small id="install-text">Ajoute Gridlock à ton écran d'accueil pour jouer sans internet.</small></span><button class="chunky yellow small" id="btn-install" hidden>Installer</button></div>
+    </div>
+    <button class="link-danger" id="btn-wipe">Effacer ma progression</button>
+    <div class="row one"><button class="chunky yellow" id="set-close">Fermer</button></div>
+  </div>
+</div>
+
+<div class="consent" id="consent" hidden role="dialog" aria-labelledby="consent-title">
+  <b id="consent-title">Statistiques de jeu</b>
+  <p>Gridlock utilise Google Analytics pour savoir combien de joueurs viennent et quels niveaux sont les plus durs. Tu peux changer d'avis dans les réglages.</p>
+  <div class="row">
+    <button class="chunky" id="consent-no">Refuser</button>
+    <button class="chunky yellow" id="consent-yes">Accepter</button>
+  </div>
+</div>
+
+<canvas id="confetti"></canvas>
+
+<script src="js/solver.js"></script>
+<script src="js/art.js"></script>
+<script src="js/levels.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
